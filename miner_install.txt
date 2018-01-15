@@ -1,0 +1,66 @@
+# Make sure you're all up to date on updates. 
+sudo apt-get update;sudo apt-get upgrade
+sudo apt-get dist-upgrade
+
+
+# Mount thumbdrive
+sudo mkdir /media/thumbdrive
+# Use dmesg to find the drive's location or 'sudo fdisk -l'
+sudo mount /dev/sdb1 /media/thumbdrive
+cd /media/thumbdrive/
+sudo cp AMD-APP-SDKInstaller-v3.0.130.136-GA-linux64.tar.bz2 amdgpu-pro-17.50-511655.tar.xz ~/Downloads/.
+cd ~/Downloads/
+tar xvf AMD-APP-SDKInstaller-v3.0.130.136-GA-linux64.tar.bz2 amdgpu-pro-17.50-511655.tar.xz
+# Install AMD-Drivers with 
+amdgpu-pro-install -y --opencl=legacy
+
+# Add user to video group
+sudo usermod -a -G video notacryptominer2 #if you miss this, then you have to run clinfo and xmr-stak with sudo. 
+
+# Install AMDSAPPSDK
+sudo ./AMD-APP-SDK-v3.0.130.136-GA-linux64.sh
+
+# FIX busted file link in the AMDAPPSDK
+cd /opt/AMDAPPSDK-3.0/lib/x86_64/
+sudo ln -sf sdk/libOpenCL.so.1 libOpenCL.so
+
+# REBOOT
+
+# Install GIT, VIM, Screen 
+sudo apt-get install git vim screen
+
+# Go to home directory
+cd
+
+# Next we build the miner
+mkdir miner
+cd miner
+sudo apt install libmicrohttpd-dev libssl-dev cmake build-essential libhwloc-dev
+# Copy over the amdgpu-pro-fans.sh utility from another miner's miner directory
+# https://github.com/DominiLux/amdgpu-pro-fans/blob/master/amdgpu-pro-fans.sh
+
+# Pull down xmr-stak
+git clone https://github.com/fireice-uk/xmr-stak.git
+cd xmr-stak
+mkdir build
+cd build
+
+# cmake; we tell it to disable NVidea drivers, and give it the include directory and opencl library locations. 
+cmake -DCUDA_ENABLE=OFF -DOpenCL_INCLUDE_DIR=/opt/AMDAPPSDK-3.0/include/ -DOpenCL_LIBRARY=/opt/AMDAPPSDK-3.0/lib/x86_64/libOpenCL.so ..
+make install
+cd bin
+
+# Copy over amd.txt, config.txt, cpu.txt
+
+# Edit config.txt to add miner name after the wallet address
+
+# Edit amd.txt to fit GPUs installed on miner. 
+clinfo | grep -i board #will show you what boards you have
+
+# Set fan speeds!
+cd ~/miner/
+sudo ./amdgpu-pro-fans.sh -s 70 #This is a percentage. 
+# Now you should be able to start up xmr-stak
+./xmr-stak
+
+#Profit
