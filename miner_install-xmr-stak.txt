@@ -1,7 +1,8 @@
 # Make sure you're all up to date on updates. 
 sudo apt-get update;sudo apt-get upgrade
 sudo apt-get dist-upgrade
-
+# Install GIT, VIM, Screen, SSH
+sudo apt-get install git vim screen openssh-server
 
 # Mount thumbdrive
 sudo mkdir /media/thumbdrive
@@ -26,8 +27,6 @@ sudo ln -sf sdk/libOpenCL.so.1 libOpenCL.so
 
 # REBOOT
 
-# Install GIT, VIM, Screen 
-sudo apt-get install git vim screen
 
 # Go to home directory
 cd
